@@ -156,9 +156,9 @@
       }
     ],
     resultGraph: [
-      { semester: "Fall 259", cgpa: 3.48 },
-      { semester: "Summer 260", cgpa: 3.63 },
-      { semester: "Spring 261", cgpa: 3.74 }
+      { semester: "Summer 2025", cgpa: 3.73 },
+      { semester: "Fall 2025", cgpa: 3.77 },
+      { semester: "Spring 2026", cgpa: 3.75 }
     ],
     courseResults: [
       {
