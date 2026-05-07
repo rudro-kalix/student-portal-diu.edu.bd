@@ -36,9 +36,9 @@
       { id: 259, code: "259", name: "Summer 259", active: true }
     ],
     paymentSummary: {
-      totalDebit: 125000,
-      totalCredit: 98500,
-      totalOther: 3000
+      totalDebit: 236701,
+      totalCredit: 236742,
+      totalOther: 0
     },
     paymentLedger: [
       {
@@ -88,7 +88,7 @@
         room: "703",
         EMPLOYEE_NAME: "Dr. Tanvir Rahman",
         teacherCode: "TR-102",
-        weekDay: "Thursday"
+        weekDay: "Sunday"
       },
       {
         COURSE_TITLE: "Discrete Mathematics",
@@ -99,7 +99,7 @@
         room: "510",
         EMPLOYEE_NAME: "Sharmin Akter",
         teacherCode: "SA-211",
-        weekDay: "Thursday"
+        weekDay: "Sunday"
       },
       {
         COURSE_TITLE: "Web Engineering",
@@ -110,7 +110,7 @@
         room: "405",
         EMPLOYEE_NAME: "Mahmud Hasan",
         teacherCode: "MH-119",
-        weekDay: "Thursday"
+        weekDay: "Sunday"
       }
     ],
     registeredCourses: [
