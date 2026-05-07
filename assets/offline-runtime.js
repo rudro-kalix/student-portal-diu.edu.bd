@@ -25,10 +25,10 @@
   var data = {
     profile: {
       id: 1,
-      username: "221-35-001",
-      firstName: "Md.",
-      lastName: "Student",
-      email: "student@offline.local"
+      username: "252-35-584",
+      firstName: "Md. Julkar Nayen Bin",
+      lastName: "Hossain",
+      email: "student@diu.edu.bd"
     },
     semesters: [
       { id: 261, code: "261", name: "Spring 261", active: true },
@@ -162,40 +162,40 @@
     ],
     courseResults: [
       {
-        courseCode: "CSE261",
-        courseTitle: "Data Structures",
+        courseCode: "MAT 102",
+        courseTitle: "Mathematics II",
         credit: 3,
-        gradeLetter: "A+",
-        gradePoint: 4,
+        gradeLetter: "A-",
+        gradePoint: 3.5,
         status: "Regular"
       },
       {
-        courseCode: "MAT203",
+        courseCode: "SE 123",
         courseTitle: "Discrete Mathematics",
         credit: 3,
-        gradeLetter: "A",
-        gradePoint: 3.75,
-        status: "Regular"
-      },
-      {
-        courseCode: "SWE211",
-        courseTitle: "Web Engineering",
-        credit: 3,
         gradeLetter: "A+",
         gradePoint: 4,
         status: "Regular"
       },
       {
-        courseCode: "ENG101",
-        courseTitle: "English for Communication",
-        credit: 3,
+        courseCode: "SE 131",
+        courseTitle: "Data Structure",
+        credit: 4,
+        gradeLetter: "A+",
+        gradePoint: 4,
+        status: "Regular"
+      },
+      {
+        courseCode: "SE 132",
+        courseTitle: "Data Structure Lab",
+        credit: 1,
         gradeLetter: "A",
         gradePoint: 3.75,
         status: "Regular"
       },
       {
-        courseCode: "PHY107",
-        courseTitle: "Physics",
+        courseCode: "SE 213",
+        courseTitle: "Digital Electronics & Logic Design",
         credit: 3,
         gradeLetter: "A-",
         gradePoint: 3.5,
@@ -252,8 +252,8 @@
         status: "Approved",
         applicationId: "SCH-261-0001",
         applicantName: "Md. Student",
-        studentId: "221-35-001",
-        registrationId: "2210001",
+        studentId: "02425205341584",
+        registrationId: "252-35-584",
         semester: { name: "Spring 261", code: "261" },
         scholarshipType: { name: "Merit Scholarship" },
         applicationFee: 500
@@ -276,7 +276,7 @@
         id: 1,
         applicationId: "DOC-261-0001",
         applicantName: "Md. Student",
-        studentId: "221-35-001",
+        studentId: "02425205341584",
         documentName: "Academic Transcript",
         applicationStatus: "Delivered"
       }
@@ -288,7 +288,7 @@
       registrationLastDate: "2026-06-30"
     },
     convocationStudent: {
-      studentId: "221-35-001",
+      studentId: "02425205341584",
       studentName: "Md. Student",
       eligible: true
     },
@@ -297,7 +297,7 @@
       status: "Submitted"
     },
     alumniEligible: {
-      studentId: "221-35-001",
+      studentId: "02425205341584",
       studentName: "Md. Student",
       eligible: true
     },
@@ -325,7 +325,7 @@
       { courseSectionId: 1001, courseTitle: "Data Structures", sectionName: "A" }
     ],
     liveResultScores: [
-      { studentId: "221-35-001", studentName: "Md. Student", marks: 92, status: "Published" }
+      { studentId: "02425205341584", studentName: "Md. Student", marks: 92, status: "Published" }
     ],
     resultTypes: [
       { id: 1, code: "REGULAR", name: "Regular Result" }
@@ -342,19 +342,19 @@
       message: "You are clear for Spring 261."
     },
     searchResult: {
-      studentId: "221-35-001",
+      studentId: "02425205341584",
       studentName: "Md. Student",
       batch: "61",
       program: "B.Sc. in Computer Science and Engineering",
       semester: "Spring 261",
-      cgpa: 3.74
+      cgpa: 3.17
     }
   };
 
   data.studentInformation = {
     id: 1,
-    studentId: "221-35-001",
-    registrationId: "2210001",
+    studentId: "02425205341584",
+    registrationId: "252-35-584",
     personId: 101,
     studentPerson: {
       id: 101,
@@ -372,7 +372,7 @@
     },
     batch: {
       id: 61,
-      name: "61",
+      name: "46",
       paymentSchemeTemplate: {
         paymentSchemes: [
           { paymentHead: { name: "Tuition Fee" }, amount: 60000 },
@@ -385,7 +385,7 @@
     program: {
       id: 10,
       code: "CSE",
-      name: "B.Sc. in Computer Science and Engineering"
+      name: "B.Sc. in Software Engineering"
     },
     department: { id: 4, name: "Computer Science & Engineering" },
     faculty: { id: 2, name: "Faculty of Science & Information Technology" },
@@ -418,7 +418,7 @@
     return {
       studentId: data.studentInformation.studentId,
       regId: data.studentInformation.registrationId,
-      cgpa: 3.74,
+      cgpa: 3.75,
       courseCode: course.courseCode,
       courseTitle: course.courseTitle,
       courseCredit: course.credit,
@@ -642,7 +642,7 @@
     "/student/document/verify/active": optionList(["Academic Transcript", "Certificate"]),
     "/student/document/verify": [
       {
-        studentId: "221-35-001",
+        studentId: "02425205341584",
         studentName: "Md. Student",
         verificationStatus: "Verified"
       }
