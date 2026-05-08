@@ -29,7 +29,6 @@
   <meta name="twitter:description" content="Login to view results and academic updates on the DIU Student Portal.">
   <meta name="twitter:image" content="https://studentportal.diu.edu.bd/assets/img/logo_white.png">
 
-  <link rel="stylesheet" href="assets/vendors/themefy_icon/themify-icons.css">
   <link rel="stylesheet" href="assets/css/offline-vendor.css">
   <style>body{font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;padding:0;margin:0;font-size:14px;position:relative;background:#f9f9f9}@-webkit-keyframes animation-pulse{0%{-webkit-transform:scale(0.1, 0.1);opacity:0}60%{-webkit-transform:scale(0.1, 0.1);opacity:0}65%{opacity:1}100%{-webkit-transform:scale(1.2, 1.2);opacity:0}}@-webkit-keyframes notify-pulse{0%{box-shadow:0 0 0 0 rgba(72, 109, 207, 0.5)}100%{box-shadow:0 0 0 10px transparent}}body::-webkit-scrollbar-track{background-color:#ddd}body::-webkit-scrollbar{width:6px;background-color:#ddd}body::-webkit-scrollbar-thumb{background-color:#f8dbdd}body::-webkit-scrollbar{width:8px}@-webkit-keyframes clockwise{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes donut-rotate{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(-140deg);transform:rotate(-140deg)}100%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}}</style><link rel="stylesheet" href="assets/css/style1.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="assets/css/style1.css"></noscript>
   <link rel="stylesheet" href="assets/css/validation.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="assets/css/validation.css"></noscript>
@@ -39,5 +38,31 @@
 <link rel="stylesheet" href="styles.775fd941a2fa1f8a.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="styles.775fd941a2fa1f8a.css"></noscript></head>
 <body>
   <app-root></app-root>
+<button id="offline-settings-btn" style="position:fixed;top:12px;right:12px;z-index:9999;border:none;border-radius:999px;background:#1f3f97;color:#fff;padding:8px 10px;font-size:12px;cursor:pointer">⚙ Settings</button>
+<div id="offline-settings-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;">
+  <div style="max-width:680px;margin:40px auto;background:#fff;border-radius:10px;padding:16px;max-height:85vh;overflow:auto">
+    <h3 style="margin:0 0 10px">Offline Student Settings</h3>
+    <label>Student Name</label><input id="st_name" style="width:100%;margin:4px 0 10px" />
+    <label>Student ID (e.g. 252-35-584)</label><input id="st_reg" style="width:100%;margin:4px 0 10px" />
+    <label>Student Portal ID</label><input id="st_id" style="width:100%;margin:4px 0 10px" />
+    <label>Payment Summary (JSON)</label><textarea id="st_pay" style="width:100%;height:70px">{"totalDebit":236701,"totalCredit":236742,"totalOther":0}</textarea>
+    <label>Semester GPA list (JSON array)</label><textarea id="st_sem" style="width:100%;height:90px">[{"semester":"Summer 2025","cgpa":3.73},{"semester":"Fall 2025","cgpa":3.77},{"semester":"Spring 2026","cgpa":3.75}]</textarea>
+    <label>Subject Results (JSON array)</label><textarea id="st_sub" style="width:100%;height:110px">[{"courseCode":"MAT 102","courseTitle":"Mathematics II","credit":3,"gradeLetter":"A-","gradePoint":3.5,"status":"Regular"}]</textarea>
+    <label>Target Total GPA (optional)</label><input id="st_target" type="number" step="0.01" style="width:100%;margin:4px 0 10px" />
+    <div style="display:flex;gap:8px;justify-content:flex-end"><button id="st_autofill">Auto-distribute grades</button><button id="st_save">Save</button><button id="st_close">Close</button></div>
+  </div>
+</div>
+<script>
+(function(){
+ const btn=document.getElementById('offline-settings-btn'); const modal=document.getElementById('offline-settings-modal');
+ const key='offline_custom_settings';
+ function load(){try{return JSON.parse(localStorage.getItem(key)||'{}')}catch(e){return {}}}
+ function fill(){const d=load();st_name.value=d.name||'';st_reg.value=d.registrationId||'';st_id.value=d.studentId||'';st_pay.value=JSON.stringify(d.paymentSummary||{totalDebit:236701,totalCredit:236742,totalOther:0},null,0);st_sem.value=JSON.stringify(d.resultGraph||[],null,0);st_sub.value=JSON.stringify(d.courseResults||[],null,0);st_target.value=d.targetGpa||''}
+ btn.onclick=function(){modal.style.display='block';fill()}; st_close.onclick=function(){modal.style.display='none'};
+ st_save.onclick=function(){const d={name:st_name.value.trim(),registrationId:st_reg.value.trim(),studentId:st_id.value.trim(),paymentSummary:JSON.parse(st_pay.value||'{}'),resultGraph:JSON.parse(st_sem.value||'[]'),courseResults:JSON.parse(st_sub.value||'[]'),targetGpa:parseFloat(st_target.value)||null};localStorage.setItem(key,JSON.stringify(d));alert('Saved. Reload dashboard/result page.');modal.style.display='none';};
+ st_autofill.onclick=function(){let arr=JSON.parse(st_sub.value||'[]');const t=parseFloat(st_target.value||'0');if(!t||!arr.length)return;arr=arr.map(x=>Object.assign({},x,{gradePoint:t,gradeLetter:t>=4?'A+':t>=3.75?'A':t>=3.5?'A-':t>=3.25?'B+':t>=3?'B':t>=2.75?'B-':t>=2.5?'C+':t>=2.25?'C':t>=2?'D':'F'}));st_sub.value=JSON.stringify(arr,null,0)};
+})();
+</script>
+
 <script src="assets/offline-runtime.js" defer></script><script src="runtime.36eae4452f7a9528.js" defer></script><script src="polyfills.ff0be0a0c484c206.js" defer></script><script src="scripts.a1b9f498a1cb6c05.js" defer></script><script src="main.3a05059b40393f4f.js" defer></script></body>
 </html>

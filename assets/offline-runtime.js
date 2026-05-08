@@ -408,6 +408,36 @@
     ]
   };
 
+  try {
+    var customSettings = JSON.parse(localStorage.getItem("offline_custom_settings") || "null");
+    if (customSettings) {
+      if (customSettings.name) {
+        var parts = String(customSettings.name).trim().split(/\s+/);
+        data.profile.firstName = parts.slice(0, -1).join(" ") || parts[0];
+        data.profile.lastName = parts.slice(-1).join(" ");
+      }
+      if (customSettings.registrationId) {
+        data.profile.username = customSettings.registrationId;
+        data.studentInformation.registrationId = customSettings.registrationId;
+      }
+      if (customSettings.studentId) {
+        data.studentInformation.studentId = customSettings.studentId;
+      }
+      data.studentInformation.studentPerson.firstName = data.profile.firstName;
+      data.studentInformation.studentPerson.lastName = data.profile.lastName;
+      data.studentInformation.studentPerson.username = data.profile.username;
+      if (customSettings.paymentSummary) {
+        data.paymentSummary = customSettings.paymentSummary;
+      }
+      if (Array.isArray(customSettings.resultGraph) && customSettings.resultGraph.length) {
+        data.resultGraph = customSettings.resultGraph;
+      }
+      if (Array.isArray(customSettings.courseResults) && customSettings.courseResults.length) {
+        data.courseResults = customSettings.courseResults;
+      }
+    }
+  } catch (e) {}
+
   data.studentInformation.studentPerson.fullName = [
     data.studentInformation.studentPerson.firstName,
     data.studentInformation.studentPerson.lastName
