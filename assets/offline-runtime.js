@@ -464,6 +464,8 @@
       gradeLetter: course.gradeLetter,
       pointEquivalent: course.gradePoint,
       status: course.status,
+      semesterCode: String(course.semesterCode || "261"),
+      semesterName: course.semester || "Spring 261",
       studentInformation: {
         studentPerson: {
           fullName: data.studentInformation.studentPerson.fullName
@@ -707,7 +709,12 @@
     var path = url.pathname;
     var params = queryParams(url);
     var jsonBody = parseJson(body);
-    var semesterId = params.semesterId || jsonBody.semesterId || "261";
+    var semesterId = params.semesterId || jsonBody.semesterId || jsonBody.semesterCode || jsonBody.semester || "261";
+    function filteredResultDetail() {
+      return data.resultDetail.filter(function (item) {
+        return String(item.semesterCode || "") === String(semesterId) || String(item.semesterName || "") === String(semesterId);
+      });
+    }
 
     if (/\/realms\/diu-student\/account$/i.test(path)) {
       return wrap(data.profile);
@@ -760,7 +767,8 @@
       return wrap(data.resultGraph);
     }
     if (/\/result\/semester$/i.test(path)) {
-      return wrap(data.resultDetail);
+      var bySem = filteredResultDetail();
+      return wrap(bySem.length ? bySem : data.resultDetail);
     }
     if (/\/result\/type(?:\/active)?$/i.test(path)) {
       return wrap(data.resultTypes);
@@ -856,10 +864,12 @@
       return wrap(data.semesters);
     }
     if (/\/check\/result$/i.test(path) && method === "POST") {
-      return wrap(data.resultDetail);
+      var checked = filteredResultDetail();
+      return wrap(checked.length ? checked : data.resultDetail);
     }
     if (/\/check\/result\/load4$/i.test(path) && method === "POST") {
-      return wrap(data.resultDetail);
+      var checked4 = filteredResultDetail();
+      return wrap(checked4.length ? checked4 : data.resultDetail);
     }
     if (/\/student\/document\/find$/i.test(path) || /\/admission\/document\/find$/i.test(path)) {
       return responseType === "blob" ? blobResponse("pdf") : blobResponse("image");
