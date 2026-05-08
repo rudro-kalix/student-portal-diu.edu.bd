@@ -52,36 +52,67 @@
       <small style="color:#666">Tip: If you only need name/ID updates, you can skip the advanced section.</small>
     </div>
 
-    <details open style="background:#fcfcfc;border:1px solid #ececec;border-radius:10px;padding:10px;margin-bottom:12px">
+    <div style="background:#fcfcfc;border:1px solid #ececec;border-radius:10px;padding:12px;margin-bottom:12px">
+      <strong style="display:block;margin-bottom:8px;color:#243046">Semester & Subject Input</strong>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+        <div style="flex:1;min-width:220px"><label>Common Semester Code</label><select id="st_common_code" style="width:100%;margin:4px 0 0;padding:8px"><option value="">Select</option><option value="252">Summer 2025 (252)</option><option value="253">Fall 2025 (253)</option><option value="261">Spring 2026 (261)</option></select></div>
+        <div style="flex:2;min-width:260px"><label>Individual Semesters</label><select id="st_semesters" multiple size="6" style="width:100%;margin:4px 0 0;padding:8px"></select><small style="color:#666">Hold Ctrl/Cmd to select multiple semesters.</small></div>
+        <div style="flex:1;min-width:200px"><label>Target SGPA</label><input id="st_target" type="number" min="0" max="4" step="0.01" placeholder="e.g. 3.99" style="width:100%;margin:4px 0 0;padding:8px" /></div>
+      </div>
+      <div style="max-height:220px;overflow:auto;border:1px solid #eee;border-radius:8px">
+        <table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:#f8f9ff"><th style="padding:8px;border-bottom:1px solid #eee;text-align:left">Semester</th><th style="padding:8px;border-bottom:1px solid #eee;text-align:left">Subject</th><th style="padding:8px;border-bottom:1px solid #eee;text-align:left">Credit</th><th style="padding:8px;border-bottom:1px solid #eee;text-align:left">Grade</th></tr></thead><tbody id="st_subject_preview"><tr><td colspan="4" style="padding:8px;color:#666">Select semester(s) to preview subjects.</td></tr></tbody></table>
+      </div>
+      <div id="st_subject_summary" style="margin-top:8px;color:#445">Total Subjects: 0 | Total Credits: 0</div>
+    </div>
+
+    <details style="background:#fcfcfc;border:1px solid #ececec;border-radius:10px;padding:10px;margin-bottom:12px">
       <summary style="cursor:pointer;font-weight:600;color:#243046">Advanced Data (Optional JSON)</summary>
-      <p style="margin:6px 0 10px;color:#666;font-size:12px">Click helper buttons to insert ready-to-edit sample structures.</p>
+      <p style="margin:6px 0 10px;color:#666;font-size:12px">Auto-generated from the simple UI above. You can still edit manually if needed.</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
         <button id="st_fill_payment" type="button">Sample Payment JSON</button>
-        <button id="st_fill_sem" type="button">Sample Semester JSON</button>
-        <button id="st_fill_sub" type="button">Sample Subject JSON</button>
       </div>
       <label>Payment Summary (JSON object)</label><textarea id="st_pay" style="width:100%;height:84px;padding:8px">{"totalDebit":236701,"totalCredit":236742,"totalOther":0}</textarea>
-      <label>Semester GPA List (JSON array)</label><textarea id="st_sem" style="width:100%;height:100px;padding:8px">[{"semester":"Summer 2025","cgpa":3.73},{"semester":"Fall 2025","cgpa":3.77},{"semester":"Spring 2026","cgpa":3.75}]</textarea>
-      <label>Subject Results (JSON array)</label><textarea id="st_sub" style="width:100%;height:128px;padding:8px">[{"courseCode":"MAT 102","courseTitle":"Mathematics II","credit":3,"gradeLetter":"A-","gradePoint":3.5,"status":"Regular"}]</textarea>
-      <label>Target Total GPA (optional)</label><input id="st_target" type="number" step="0.01" placeholder="e.g. 3.50" style="width:100%;margin:4px 0 0;padding:8px" />
+      <label>Semester GPA List (JSON array)</label><textarea id="st_sem" style="width:100%;height:100px;padding:8px">[]</textarea>
+      <label>Subject Results (JSON array)</label><textarea id="st_sub" style="width:100%;height:128px;padding:8px">[]</textarea>
     </details>
 
-    <div id="st_error" style="display:none;background:#fff4f4;border:1px solid #ffc7c7;color:#b00020;padding:8px;border-radius:8px;margin-bottom:10px"></div>
+<div id="st_error" style="display:none;background:#fff4f4;border:1px solid #ffc7c7;color:#b00020;padding:8px;border-radius:8px;margin-bottom:10px"></div>
     <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap"><button id="st_autofill">Auto-distribute grades</button><button id="st_save">Save</button><button id="st_close">Close</button></div>
   </div>
 </div>
 <script>
 (function(){
+ const semesterCatalog=window.__SEMESTER_CATALOG__||{};
+ const gradeScale=[[4,'A+'],[3.75,'A'],[3.5,'A-'],[3.25,'B+'],[3,'B'],[2.75,'B-'],[2.5,'C+'],[2.25,'C'],[2,'D'],[0,'F']];
  const btn=document.getElementById('offline-settings-btn'); const modal=document.getElementById('offline-settings-modal');
  const key='offline_custom_settings';
  function load(){try{return JSON.parse(localStorage.getItem(key)||'{}')}catch(e){return {}}}
+ function safeJSON(v,fb){try{return JSON.parse(v)}catch(e){return fb}}
+ function gradeLetter(gp){for(const [p,l] of gradeScale){if(gp>=p)return l}return 'F'}
+ function chooseGp(target){let best=0,min=999;for(const [gp] of gradeScale){const d=Math.abs(target-gp);if(d<min){min=d;best=gp}}return best}
+ function ord(i){return i===1?'1st':i===2?'2nd':i===3?'3rd':`${i}th`}
+ function buildSemesterOptions(){st_semesters.innerHTML='';for(let i=1;i<=12;i++){const o=document.createElement('option');o.value=String(i);o.textContent=`${ord(i)} Semester`;st_semesters.appendChild(o)}}
+ function renderSubjects(){
+   const selected=[...st_semesters.selectedOptions].map(o=>o.value);
+   const target=parseFloat(st_target.value||'0');
+   const rows=[];
+   selected.forEach(sem=>{(semesterCatalog[sem]||[]).forEach(s=>rows.push({semester:ord(Number(sem)),...s}))});
+   st_subject_preview.innerHTML='';
+   if(!rows.length){st_subject_preview.innerHTML="<tr><td colspan='4' style='padding:8px;color:#666'>Select semester(s) to preview subjects.</td></tr>";st_subject_summary.textContent='Total Subjects: 0 | Total Credits: 0';st_sem.value='[]';st_sub.value='[]';return}
+   let totalCredits=0;
+   const subData=rows.map(r=>{totalCredits+=r.c; const gp=target?chooseGp(target):0;return {courseCode:'',courseTitle:r.n,credit:r.c,gradeLetter:target?gradeLetter(gp):'-',gradePoint:target?gp:0,status:'Regular',semester:r.semester}});
+   subData.forEach(r=>st_subject_preview.insertAdjacentHTML('beforeend',`<tr><td style='padding:8px;border-bottom:1px solid #eee'>${r.semester}</td><td style='padding:8px;border-bottom:1px solid #eee'>${r.courseTitle}</td><td style='padding:8px;border-bottom:1px solid #eee'>${r.credit}</td><td style='padding:8px;border-bottom:1px solid #eee'>${r.gradeLetter}</td></tr>`));
+   st_subject_summary.textContent=`Total Subjects: ${subData.length} | Total Credits: ${totalCredits}${target?` | Target SGPA: ${target.toFixed(2)}`:''}`;
+   st_sub.value=JSON.stringify(subData.map(({semester,...x})=>x),null,2);
+   st_sem.value=JSON.stringify(selected.map(s=>({semesterCode:st_common_code.value||'',semester:`${ord(Number(s))} Semester`,cgpa:target||0})),null,2);
+ }
  function fill(){const d=load();st_name.value=d.name||'';st_reg.value=d.registrationId||'';st_id.value=d.studentId||'';st_pay.value=JSON.stringify(d.paymentSummary||{totalDebit:236701,totalCredit:236742,totalOther:0},null,2);st_sem.value=JSON.stringify(d.resultGraph||[],null,2);st_sub.value=JSON.stringify(d.courseResults||[],null,2);st_target.value=d.targetGpa||'';st_error.style.display='none';st_error.textContent=''}
- btn.onclick=function(){modal.style.display='block';fill()}; st_close.onclick=function(){modal.style.display='none'};
- st_save.onclick=function(){try{const d={name:st_name.value.trim(),registrationId:st_reg.value.trim(),studentId:st_id.value.trim(),paymentSummary:JSON.parse(st_pay.value||'{}'),resultGraph:JSON.parse(st_sem.value||'[]'),courseResults:JSON.parse(st_sub.value||'[]'),targetGpa:parseFloat(st_target.value)||null};localStorage.setItem(key,JSON.stringify(d));alert('Saved. Reload dashboard/result page.');modal.style.display='none';}catch(err){st_error.textContent='Invalid JSON detected. Please check the Advanced Data section.';st_error.style.display='block';}};
- st_autofill.onclick=function(){let arr=JSON.parse(st_sub.value||'[]');const t=parseFloat(st_target.value||'0');if(!t||!arr.length)return;arr=arr.map(x=>Object.assign({},x,{gradePoint:t,gradeLetter:t>=4?'A+':t>=3.75?'A':t>=3.5?'A-':t>=3.25?'B+':t>=3?'B':t>=2.75?'B-':t>=2.5?'C+':t>=2.25?'C':t>=2?'D':'F'}));st_sub.value=JSON.stringify(arr,null,2)};
+ buildSemesterOptions();
+ btn.onclick=function(){modal.style.display='block';fill();renderSubjects()}; st_close.onclick=function(){modal.style.display='none'};
+ st_save.onclick=function(){try{const d={name:st_name.value.trim(),registrationId:st_reg.value.trim(),studentId:st_id.value.trim(),paymentSummary:safeJSON(st_pay.value,{}),resultGraph:safeJSON(st_sem.value,[]),courseResults:safeJSON(st_sub.value,[]),targetGpa:parseFloat(st_target.value)||null};localStorage.setItem(key,JSON.stringify(d));alert('Saved. Reload dashboard/result page.');modal.style.display='none';}catch(err){st_error.textContent='Invalid JSON detected. Please check data.';st_error.style.display='block';}};
+ st_autofill.onclick=renderSubjects;
  st_fill_payment.onclick=function(){st_pay.value=JSON.stringify({totalDebit:236701,totalCredit:236742,totalOther:0},null,2)};
- st_fill_sem.onclick=function(){st_sem.value=JSON.stringify([{semester:'Summer 2025',cgpa:3.73},{semester:'Fall 2025',cgpa:3.77}],null,2)};
- st_fill_sub.onclick=function(){st_sub.value=JSON.stringify([{courseCode:'CSE 111',courseTitle:'Programming Language I',credit:3,gradeLetter:'A',gradePoint:3.75,status:'Regular'}],null,2)};
+ st_semesters.addEventListener('change',renderSubjects); st_target.addEventListener('input',renderSubjects); st_common_code.addEventListener('change',renderSubjects);
 })();
 </script>
 
