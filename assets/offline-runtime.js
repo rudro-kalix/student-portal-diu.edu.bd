@@ -431,6 +431,15 @@
       }
       if (Array.isArray(customSettings.resultGraph) && customSettings.resultGraph.length) {
         data.resultGraph = customSettings.resultGraph;
+        data.semesters = customSettings.resultGraph.map(function (item, index) {
+          var code = item.semesterCode || String(261 - index);
+          return {
+            id: Number(code) || 261 - index,
+            code: String(code),
+            name: item.semester || ("Semester " + code),
+            active: true
+          };
+        });
       }
       if (Array.isArray(customSettings.courseResults) && customSettings.courseResults.length) {
         data.courseResults = customSettings.courseResults;
@@ -491,8 +500,8 @@
   setSessionCache("semesters", data.semesters);
   setSessionCache("payment_summery", data.paymentSummary);
   setSessionCache("daily_routine_summery", {
-    SEMESTER_ID: 261,
-    SEMESTER_NAME: "Spring 261"
+    SEMESTER_ID: data.semesters[0] ? data.semesters[0].id : 261,
+    SEMESTER_NAME: data.semesters[0] ? data.semesters[0].name : "Spring 261"
   });
   setSessionCache("routines", data.routines);
   setSessionCache("semester_results", data.resultGraph);
@@ -844,7 +853,7 @@
       return wrap({ image: tinyPngBase64, hidden: "261" });
     }
     if (/\/check\/result\/semester$/i.test(path)) {
-      return wrap([data.semesters[0]]);
+      return wrap(data.semesters);
     }
     if (/\/check\/result$/i.test(path) && method === "POST") {
       return wrap(data.resultDetail);
