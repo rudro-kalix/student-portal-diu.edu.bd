@@ -40,26 +40,19 @@
   <script>
 const isLoginPage =
   location.pathname.includes("login") ||
-  location.pathname.endsWith("/") ||
-  location.pathname.includes("index");
+  location.hash.includes("/login");
 
-if (!isLoginPage) {
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("offline-settings-btn");
+  const modal = document.getElementById("offline-settings-modal");
 
-  document.addEventListener("DOMContentLoaded", () => {
-
-    const btn = document.getElementById("offline-settings-btn");
-    const modal = document.getElementById("offline-settings-modal");
-
-    if (btn) btn.style.display = "none";
-    if (modal) modal.style.display = "none";
-
-  });
-
-}
+  if (btn) btn.style.display = isLoginPage ? "block" : "none";
+  if (modal && !isLoginPage) modal.style.display = "none";
+});
 </script>
   
   <app-root></app-root>
-<button id="offline-settings-btn" style="position:fixed;top:12px;right:12px;z-index:9999;border:none;border-radius:999px;background:#1f3f97;color:#fff;padding:8px 10px;font-size:12px;cursor:pointer">⚙ Settings</button>
+<button id="offline-settings-btn" style="display:none;position:fixed;top:12px;right:12px;z-index:9999;border:none;border-radius:999px;background:#1f3f97;color:#fff;padding:8px 10px;font-size:12px;cursor:pointer">⚙ Settings</button>
 <div id="offline-settings-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;">
   <div style="max-width:760px;margin:24px auto;background:#fff;border-radius:12px;padding:18px;max-height:90vh;overflow:auto;box-shadow:0 12px 28px rgba(0,0,0,.25)">
     <h3 style="margin:0 0 8px">Offline Settings</h3>
