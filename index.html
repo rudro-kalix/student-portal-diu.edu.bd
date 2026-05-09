@@ -77,13 +77,14 @@
     <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap"><button id="st_autofill">Auto-distribute grades</button><button id="st_save">Save</button><button id="st_close">Close</button></div>
   </div>
 </div>
+<script src="assets/js-semester-helper.js"></script>
 <script>
 (function(){
  const semesterCatalog=window.__SEMESTER_CATALOG__||{};
  const gradeScale=[[4,'A+'],[3.75,'A'],[3.5,'A-'],[3.25,'B+'],[3,'B'],[2.75,'B-'],[2.5,'C+'],[2.25,'C'],[2,'D'],[0,'F']];
- const semesterCodeSequence=['262','261','254','253','252','251'];
+ const semesterCodeSequence=['252','253','261','262','263','264','271','272','273','274','281','282'];
  const commonNamesByCode={252:'1st Semester',253:'2nd Semester',261:'3rd Semester'};
- const codeLabels={262:'Summer 2026',261:'Spring 2026',254:'Short 2025',253:'Fall 2025',252:'Summer 2025',251:'Spring 2025'};
+ const codeLabels={252:'1st Semester',253:'2nd Semester',261:'3rd Semester',262:'4th Semester',263:'5th Semester',264:'6th Semester',271:'7th Semester',272:'8th Semester',273:'9th Semester',274:'10th Semester',281:'11th Semester',282:'12th Semester'};
  const btn=document.getElementById('offline-settings-btn'); const modal=document.getElementById('offline-settings-modal');
  const key='offline_custom_settings';
  function load(){try{return JSON.parse(localStorage.getItem(key)||'{}')}catch(e){return {}}}
@@ -162,5 +163,5 @@
 })();
 </script>
 
-<script src="assets/offline-runtime.js" defer></script><script src="runtime.36eae4452f7a9528.js" defer></script><script src="polyfills.ff0be0a0c484c206.js" defer></script><script src="scripts.a1b9f498a1cb6c05.js" defer></script><script src="main.3a05059b40393f4f.js" defer></script><script src="assets/js-semester-helper.js" defer></script></body>
+<script src="assets/offline-runtime.js" defer></script><script src="runtime.36eae4452f7a9528.js" defer></script><script src="polyfills.ff0be0a0c484c206.js" defer></script><script src="scripts.a1b9f498a1cb6c05.js" defer></script><script src="main.3a05059b40393f4f.js" defer></script></body>
 </html>
