@@ -70,6 +70,15 @@
       <label>Payment Summary (JSON object)</label><textarea id="st_pay" style="width:100%;height:84px;padding:8px">{"totalDebit":236701,"totalCredit":236742,"totalOther":0}</textarea>
     </details>
 
+<input id="st_id" type="hidden">
+<input id="st_target" type="hidden" value="0">
+
+<textarea id="st_sem" hidden>[]</textarea>
+<textarea id="st_sub" hidden>[]</textarea>
+
+<button id="st_autofill" hidden></button>
+
+
 <div id="st_error" style="display:none;background:#fff4f4;border:1px solid #ffc7c7;color:#b00020;padding:8px;border-radius:8px;margin-bottom:10px"></div>
     <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap"> <button onclick="clearSiteData()">RESET!!</button><button id="st_save">Save</button><button id="st_close">Close</button></div>
   </div>
