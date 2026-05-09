@@ -37,6 +37,27 @@
 
 <link rel="stylesheet" href="styles.775fd941a2fa1f8a.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="styles.775fd941a2fa1f8a.css"></noscript></head>
 <body>
+  <script>
+const isLoginPage =
+  location.pathname.includes("login") ||
+  location.pathname.endsWith("/") ||
+  location.pathname.includes("index");
+
+if (!isLoginPage) {
+
+  document.addEventListener("DOMContentLoaded", () => {
+
+    const btn = document.getElementById("offline-settings-btn");
+    const modal = document.getElementById("offline-settings-modal");
+
+    if (btn) btn.style.display = "none";
+    if (modal) modal.style.display = "none";
+
+  });
+
+}
+</script>
+  
   <app-root></app-root>
 <button id="offline-settings-btn" style="position:fixed;top:12px;right:12px;z-index:9999;border:none;border-radius:999px;background:#1f3f97;color:#fff;padding:8px 10px;font-size:12px;cursor:pointer">⚙ Settings</button>
 <div id="offline-settings-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;">
