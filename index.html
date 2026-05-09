@@ -71,9 +71,42 @@
     </details>
 
 <div id="st_error" style="display:none;background:#fff4f4;border:1px solid #ffc7c7;color:#b00020;padding:8px;border-radius:8px;margin-bottom:10px"></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap"><button id="st_save">Save</button><button id="st_close">Close</button></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap"> <button onclick="clearSiteData()">RESET!!</button><button id="st_save">Save</button><button id="st_close">Close</button></div>
   </div>
 </div>
+ 
+
+<script>
+function clearSiteData() {
+
+  // Clear local storage
+  localStorage.clear();
+
+  // Clear session storage
+  sessionStorage.clear();
+
+  // Clear cookies
+  document.cookie.split(";").forEach(function(cookie) {
+    document.cookie = cookie
+      .replace(/^ +/, "")
+      .replace(/=.*/, "=;expires=" + new Date(0).toUTCString() + ";path=/");
+  });
+
+  // Clear Cache Storage (for PWA/service workers)
+  if ('caches' in window) {
+    caches.keys().then(function(names) {
+      for (let name of names)
+        caches.delete(name);
+    });
+  }
+
+  // Optional alert
+  alert("Site data cleared!");
+
+  // Reload page
+  location.reload();
+}
+</script>
 <script src="assets/js-semester-helper.js"></script>
 <script>
 (function(){
