@@ -409,226 +409,63 @@
   };
 
   try {
-try {
-
-  var customSettings = JSON.parse(
-    localStorage.getItem("offline_custom_settings") || "null"
-  );
-
-  if (customSettings) {
-
-    if (customSettings.name) {
-
-      var parts = String(customSettings.name)
-        .trim()
-        .split(/\s+/);
-
-      data.profile.firstName =
-        parts.slice(0, -1).join(" ") || parts[0];
-
-      data.profile.lastName =
-        parts.slice(-1).join(" ");
-    }
-
-    if (customSettings.registrationId) {
-
-      data.profile.username =
-        customSettings.registrationId;
-
-      data.studentInformation.registrationId =
-        customSettings.registrationId;
-    }
-
-    if (customSettings.studentId) {
-
-      data.studentInformation.studentId =
-        customSettings.studentId;
-    }
-
-    data.studentInformation.studentPerson.firstName =
-      data.profile.firstName;
-
-    data.studentInformation.studentPerson.lastName =
-      data.profile.lastName;
-
-    data.studentInformation.studentPerson.username =
-      data.profile.username;
-
-    if (customSettings.paymentSummary) {
-
-      data.paymentSummary =
-        customSettings.paymentSummary;
-    }
-
-    if (
-      Array.isArray(customSettings.resultGraph) &&
-      customSettings.resultGraph.length
-    ) {
-
-      data.resultGraph =
-        customSettings.resultGraph;
-
-      data.semesters =
-        customSettings.resultGraph.map(function(item){
-
-          const code = String(
-            item.semesterCode || ''
-          );
-
+    var customSettings = JSON.parse(localStorage.getItem("offline_custom_settings") || "null");
+    if (customSettings) {
+      if (customSettings.name) {
+        var parts = String(customSettings.name).trim().split(/\s+/);
+        data.profile.firstName = parts.slice(0, -1).join(" ") || parts[0];
+        data.profile.lastName = parts.slice(-1).join(" ");
+      }
+      if (customSettings.registrationId) {
+        data.profile.username = customSettings.registrationId;
+        data.studentInformation.registrationId = customSettings.registrationId;
+      }
+      if (customSettings.studentId) {
+        data.studentInformation.studentId = customSettings.studentId;
+      }
+      data.studentInformation.studentPerson.firstName = data.profile.firstName;
+      data.studentInformation.studentPerson.lastName = data.profile.lastName;
+      data.studentInformation.studentPerson.username = data.profile.username;
+      if (customSettings.paymentSummary) {
+        data.paymentSummary = customSettings.paymentSummary;
+      }
+      if (Array.isArray(customSettings.resultGraph) && customSettings.resultGraph.length) {
+        data.resultGraph = customSettings.resultGraph;
+        data.semesters = customSettings.resultGraph.map(function (item, index) {
+          var code = item.semesterCode || String(261 - index);
           return {
-
-            id: Number(code),
-
-            code: code,
-
-            name:
-              item.semester ||
-              ('Semester ' + code),
-
+            id: Number(code) || 261 - index,
+            code: String(code),
+            name: item.semester || ("Semester " + code),
             active: true
           };
         });
-    }
-
-    if (
-      Array.isArray(customSettings.courseResults) &&
-      customSettings.courseResults.length
-    ) {
-
-      data.courseResults =
-        customSettings.courseResults;
-    }
-  }
-
-} catch (e) {}
-
-data.studentInformation.studentPerson.fullName = [
-
-  data.studentInformation.studentPerson.firstName,
-
-  data.studentInformation.studentPerson.lastName
-
-].join(" ").trim();
-
-data.studentInformation.batch.code =
-  data.studentInformation.batch.name;
-
-var semesterCodeByName = {};
-
-data.semesters.forEach(function (sem) {
-
-  semesterCodeByName[
-    String(sem.name || "").toLowerCase()
-  ] = String(sem.code || sem.id);
-});
-
-var cgpaBySemesterCode = {};
-
-data.resultGraph.forEach(function (item) {
-
-  if (!item) return;
-
-  var code =
-    item.semesterCode ||
-    semesterCodeByName[
-      String(item.semester || "")
-        .toLowerCase()
-    ];
-
-  if (code != null) {
-
-    cgpaBySemesterCode[
-      String(code)
-    ] = Number(item.cgpa) || 0;
-  }
-});
-
-data.resultDetail =
-  data.courseResults.map(function (course) {
-
-    var courseSemCode = String(
-
-      course.semesterCode ||
-
-      semesterCodeByName[
-        String(course.semester || '')
-          .toLowerCase()
-      ] ||
-
-      data.semesters[0].code
-    );
-
-    return {
-
-      studentId:
-        data.studentInformation.studentId,
-
-      regId:
-        data.studentInformation.registrationId,
-
-      cgpa:
-        cgpaBySemesterCode[
-          courseSemCode
-        ] != null
-
-          ? cgpaBySemesterCode[
-              courseSemCode
-            ]
-
-          : 3.75,
-
-      semesterId:
-        Number(courseSemCode),
-
-      semesterCode:
-        courseSemCode,
-
-      courseCode:
-        course.courseCode,
-
-      courseTitle:
-        course.courseTitle,
-
-      courseCredit:
-        course.credit,
-
-      gradeLetter:
-        course.gradeLetter,
-
-      pointEquivalent:
-        course.gradePoint,
-
-      status:
-        course.status,
-
-      studentInformation: {
-
-        studentPerson: {
-
-          fullName:
-            data.studentInformation
-              .studentPerson
-              .fullName
-        },
-
-        batch: {
-
-          code:
-            data.studentInformation
-              .batch
-              .code
-        },
-
-        program: {
-
-          name:
-            data.studentInformation
-              .program
-              .name
-        }
       }
-    };
+      if (Array.isArray(customSettings.courseResults) && customSettings.courseResults.length) {
+        data.courseResults = customSettings.courseResults;
+      }
+    }
+  } catch (e) {}
+
+  data.studentInformation.studentPerson.fullName = [
+    data.studentInformation.studentPerson.firstName,
+    data.studentInformation.studentPerson.lastName
+  ].join(" ").trim();
+  data.studentInformation.batch.code = data.studentInformation.batch.name;
+
+  var semesterCodeByName = {};
+  data.semesters.forEach(function (sem) {
+    semesterCodeByName[String(sem.name || "").toLowerCase()] = String(sem.code || sem.id);
   });
+  var cgpaBySemesterCode = {};
+  data.resultGraph.forEach(function (item) {
+    if (!item) return;
+    var code = item.semesterCode || semesterCodeByName[String(item.semester || "").toLowerCase()];
+    if (code != null) cgpaBySemesterCode[String(code)] = Number(item.cgpa) || 0;
+  });
+
+  data.resultDetail = data.courseResults.map(function (course) {
+    var courseSemCode = String(course.semesterCode || semesterCodeByName[String(course.semester || "").toLowerCase()] || data.semesters[0].code || 261);
     return {
       studentId: data.studentInformation.studentId,
       regId: data.studentInformation.registrationId,
