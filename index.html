@@ -38,16 +38,19 @@
 <link rel="stylesheet" href="styles.775fd941a2fa1f8a.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="styles.775fd941a2fa1f8a.css"></noscript></head>
 <body>
   <script>
-const isLoginPage =
-  location.pathname.includes("login") ||
-  location.hash.includes("/login");
+const isWelcomeRoute =
+  location.pathname.endsWith("/") ||
+  location.pathname.endsWith("/index.html") ||
+  location.pathname.endsWith("index");
 
 document.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("offline-settings-btn");
   const modal = document.getElementById("offline-settings-modal");
+  const isWelcomePage = document.body.textContent.includes("Welcome to Student Portal");
+  const showSettings = isWelcomeRoute && isWelcomePage;
 
-  if (btn) btn.style.display = isLoginPage ? "block" : "none";
-  if (modal && !isLoginPage) modal.style.display = "none";
+  if (btn) btn.style.display = showSettings ? "block" : "none";
+  if (modal && !showSettings) modal.style.display = "none";
 });
 </script>
   
