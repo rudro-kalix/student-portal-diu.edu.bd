@@ -453,11 +453,25 @@
   ].join(" ").trim();
   data.studentInformation.batch.code = data.studentInformation.batch.name;
 
+  var semesterCodeByName = {};
+  data.semesters.forEach(function (sem) {
+    semesterCodeByName[String(sem.name || "").toLowerCase()] = String(sem.code || sem.id);
+  });
+  var cgpaBySemesterCode = {};
+  data.resultGraph.forEach(function (item) {
+    if (!item) return;
+    var code = item.semesterCode || semesterCodeByName[String(item.semester || "").toLowerCase()];
+    if (code != null) cgpaBySemesterCode[String(code)] = Number(item.cgpa) || 0;
+  });
+
   data.resultDetail = data.courseResults.map(function (course) {
+    var courseSemCode = String(course.semesterCode || semesterCodeByName[String(course.semester || "").toLowerCase()] || data.semesters[0].code || 261);
     return {
       studentId: data.studentInformation.studentId,
       regId: data.studentInformation.registrationId,
-      cgpa: 3.75,
+      cgpa: cgpaBySemesterCode[courseSemCode] != null ? cgpaBySemesterCode[courseSemCode] : 3.75,
+      semesterId: Number(courseSemCode),
+      semesterCode: courseSemCode,
       courseCode: course.courseCode,
       courseTitle: course.courseTitle,
       courseCredit: course.credit,
@@ -505,7 +519,12 @@
   });
   setSessionCache("routines", data.routines);
   setSessionCache("semester_results", data.resultGraph);
-  setExpirySessionCache("academicResult_261", data.resultDetail, 1800000);
+  data.semesters.forEach(function (sem) {
+    var semId = Number(sem.id);
+    setExpirySessionCache("academicResult_" + semId, data.resultDetail.filter(function (item) {
+      return Number(item.semesterId) === semId;
+    }), 1800000);
+  });
   setSessionCache("application_lists", data.documentApplications);
 
   function offlineNotice(message) {
@@ -760,7 +779,9 @@
       return wrap(data.resultGraph);
     }
     if (/\/result\/semester$/i.test(path)) {
-      return wrap(data.resultDetail);
+      return wrap(data.resultDetail.filter(function (item) {
+        return String(item.semesterId) === String(semesterId);
+      }));
     }
     if (/\/result\/type(?:\/active)?$/i.test(path)) {
       return wrap(data.resultTypes);

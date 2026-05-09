@@ -90,6 +90,34 @@
  function safeJSON(v,fb){try{return JSON.parse(v)}catch(e){return fb}}
  function gradeLetter(gp){for(const [p,l] of gradeScale){if(gp>=p)return l}return 'F'}
  function chooseGp(target){let best=0,min=999;for(const [gp] of gradeScale){const d=Math.abs(target-gp);if(d<min){min=d;best=gp}}return best}
+ function distributeSemesterGrades(courses,targetSgpa){
+   const cleanTarget=Math.max(0,Math.min(4,Number(targetSgpa)||0));
+   const items=(courses||[]).map(c=>({course:c,credit:Number(c.c)||0,gp:chooseGp(cleanTarget)}));
+   const totalCredits=items.reduce((sum,it)=>sum+it.credit,0);
+   if(!totalCredits)return items;
+   const getCurrent=()=>items.reduce((sum,it)=>sum+(it.gp*it.credit),0)/totalCredits;
+   const sortedScale=[...gradeScale].map(([gp])=>gp).sort((a,b)=>b-a);
+   const maxSteps=4000;
+   let steps=0;
+   while(steps<maxSteps){
+     steps++;
+     const current=getCurrent();
+     const diff=cleanTarget-current;
+     if(Math.abs(diff)<=0.005)break;
+     let bestIdx=-1,bestGp=null,bestDelta=Infinity;
+     for(let i=0;i<items.length;i++){
+       const now=items[i].gp;
+       const next=diff>0?sortedScale[sortedScale.indexOf(now)-1]:sortedScale[sortedScale.indexOf(now)+1];
+       if(next===undefined)continue;
+       const candidate=current+((next-now)*items[i].credit/totalCredits);
+       const delta=Math.abs(cleanTarget-candidate);
+       if(delta<bestDelta){bestDelta=delta;bestIdx=i;bestGp=next;}
+     }
+     if(bestIdx===-1)break;
+     items[bestIdx].gp=bestGp;
+   }
+   return items;
+ }
  function ord(i){return i===1?'1st':i===2?'2nd':i===3?'3rd':`${i}th`}
  function semesterCodeByIndex(i){return semesterCodeSequence[i-1]||String(250+i)}
  function semesterName(i){const code=semesterCodeByIndex(i);return commonNamesByCode[code]||`${ord(i)} Semester`}
@@ -114,14 +142,14 @@
    const subData=[];
    selected.forEach(sem=>{
      const sg=parseFloat((st_sgpa_inputs.dataset[`st_sgpa_${sem}`]||sgpaMap[sem]||0));
-     (semesterCatalog[String(sem)]||[]).forEach(course=>{
-       const gp=chooseGp(sg||0);
-       subData.push({courseCode:'',courseTitle:course.n,credit:course.c,gradeLetter:gradeLetter(gp),gradePoint:gp,status:'Regular',semester:semesterName(sem)});
+     const distributed=distributeSemesterGrades(semesterCatalog[String(sem)]||[],sg||0);
+     distributed.forEach(({course,gp})=>{
+       subData.push({courseCode:'',courseTitle:course.n,credit:course.c,gradeLetter:gradeLetter(gp),gradePoint:gp,status:'Regular',semester:semesterName(sem),semesterCode:semesterCodeByIndex(sem)});
      });
    });
    const totalCredits=subData.reduce((a,b)=>a+b.credit,0);
    st_subject_summary.textContent=`Selected Semesters: ${selected.length} | Total Subjects: ${subData.length} | Total Credits: ${totalCredits}`;
-   st_sub.value=JSON.stringify(subData.map(({semester,...x})=>x),null,2);
+   st_sub.value=JSON.stringify(subData,null,2);
    st_sem.value=JSON.stringify(selected.map(s=>{const code=semesterCodeByIndex(s);const sg=parseFloat(st_sgpa_inputs.dataset[`st_sgpa_${s}`]||fallback||0);return {semesterCode:code,semester:commonNamesByCode[code]||`Semester ${s}`,cgpa:sg||0};}),null,2);
  }
  function fill(){const d=load();st_name.value=d.name||'';st_reg.value=d.registrationId||'';st_id.value=d.studentId||'';st_pay.value=JSON.stringify(d.paymentSummary||{totalDebit:236701,totalCredit:236742,totalOther:0},null,2);st_sem.value=JSON.stringify(d.resultGraph||[],null,2);st_sub.value=JSON.stringify(d.courseResults||[],null,2);st_target.value=d.targetGpa||'';Object.keys(st_sgpa_inputs.dataset).forEach(k=>delete st_sgpa_inputs.dataset[k]);st_error.style.display='none';st_error.textContent=''}
