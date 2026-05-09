@@ -41,36 +41,33 @@
 <button id="offline-settings-btn" style="position:fixed;top:12px;right:12px;z-index:9999;border:none;border-radius:999px;background:#1f3f97;color:#fff;padding:8px 10px;font-size:12px;cursor:pointer">⚙ Settings</button>
 <div id="offline-settings-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;">
   <div style="max-width:760px;margin:24px auto;background:#fff;border-radius:12px;padding:18px;max-height:90vh;overflow:auto;box-shadow:0 12px 28px rgba(0,0,0,.25)">
-    <h3 style="margin:0 0 8px">Offline Student Settings</h3>
-    <p style="margin:0 0 14px;color:#56607a;font-size:13px">Use simple fields below. Advanced JSON is optional and prefilled with examples.</p>
+    <h3 style="margin:0 0 8px">Offline Settings</h3>
+    <p style="margin:0 0 14px;color:#56607a;font-size:13px">⚠️Clear Your Site data to reset all the values⚠️</p>
 
     <div style="background:#f7f9ff;border:1px solid #dbe3ff;border-radius:10px;padding:12px;margin-bottom:12px">
       <strong style="display:block;margin-bottom:8px;color:#1d2f7a">Basic Information</strong>
       <label>Student Name</label><input id="st_name" placeholder="e.g. Rahim Ahmed" style="width:100%;margin:4px 0 10px;padding:8px" />
       <label>Student ID (e.g. 252-35-584)</label><input id="st_reg" placeholder="252-35-584" style="width:100%;margin:4px 0 10px;padding:8px" />
-      <label>Student Portal ID</label><input id="st_id" placeholder="e.g. 221-15-1234" style="width:100%;margin:4px 0 2px;padding:8px" />
-      <small style="color:#666">Tip: If you only need name/ID updates, you can skip the advanced section.</small>
+
     </div>
 
     <div style="background:#fcfcfc;border:1px solid #ececec;border-radius:10px;padding:12px;margin-bottom:12px">
-      <strong style="display:block;margin-bottom:8px;color:#243046">Semester & Subject Input</strong>
+      <strong style="display:block;margin-bottom:8px;color:#243046">Semester & SGPA Input</strong>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">
-        <div style="flex:2;min-width:260px"><label>Individual Semesters</label><select id="st_semesters" multiple size="6" style="width:100%;margin:4px 0 0;padding:8px"></select><small style="color:#666">Hold Ctrl/Cmd to select multiple semesters.</small></div>
-        <div style="flex:1;min-width:200px"><label>Target SGPA (Optional fallback)</label><input id="st_target" type="number" min="0" max="4" step="0.01" placeholder="e.g. 3.99" style="width:100%;margin:4px 0 0;padding:8px" /></div>
+        <div style="flex:2;min-width:260px"><label>Select individual semesters</label><select id="st_semesters" multiple size="6" style="width:100%;margin:4px 0 0;padding:8px"></select><small style="color:#666">Hold Ctrl/Cmd to select multiple semesters.</small></div>
+       
       </div>
       <div id="st_sgpa_inputs" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px"></div>
       <div id="st_subject_summary" style="margin-top:8px;color:#445">Select semesters, then enter SGPA for each semester.</div>
     </div>
 
     <details style="background:#fcfcfc;border:1px solid #ececec;border-radius:10px;padding:10px;margin-bottom:12px">
-      <summary style="cursor:pointer;font-weight:600;color:#243046">Advanced Data (Optional JSON)</summary>
-      <p style="margin:6px 0 10px;color:#666;font-size:12px">Auto-generated from the simple UI above. You can still edit manually if needed.</p>
+      <summary style="cursor:pointer;font-weight:600;color:#243046">Set paid and due </summary>
+      <p style="margin:6px 0 10px;color:#666;font-size:12px">Just Replace Numbers with yours</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
         <button id="st_fill_payment" type="button">Sample Payment JSON</button>
       </div>
       <label>Payment Summary (JSON object)</label><textarea id="st_pay" style="width:100%;height:84px;padding:8px">{"totalDebit":236701,"totalCredit":236742,"totalOther":0}</textarea>
-      <label>Semester GPA List (JSON array)</label><textarea id="st_sem" style="width:100%;height:100px;padding:8px">[]</textarea>
-      <label>Subject Results (JSON array)</label><textarea id="st_sub" style="width:100%;height:128px;padding:8px">[]</textarea>
     </details>
 
 <div id="st_error" style="display:none;background:#fff4f4;border:1px solid #ffc7c7;color:#b00020;padding:8px;border-radius:8px;margin-bottom:10px"></div>
